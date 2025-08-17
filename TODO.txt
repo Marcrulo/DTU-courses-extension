@@ -1,0 +1,7 @@
+CRON job
+Add to official public Github repo
+- add README.md
+Figure out how chrome extensions work
+
+
+https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world

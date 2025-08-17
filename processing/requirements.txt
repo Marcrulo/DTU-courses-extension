@@ -1,0 +1,6 @@
+bs4
+networkx
+matplotlib
+json
+re
+scikit-learn

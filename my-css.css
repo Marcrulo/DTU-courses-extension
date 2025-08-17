@@ -1,0 +1,64 @@
+#course-overview {
+  text-align: center;
+  vertical-align: middle;
+}
+.tooltip-link {
+  position: relative;
+  color: #b50404;
+  text-decoration: none;
+}
+
+.tooltip-link .tooltip-text {
+  visibility: hidden;
+  opacity: 0;
+  background-color: rgba(255, 255, 255, 0.5);
+  color: black;
+  border: 1px solid #b50404;
+  border-radius: 6px;
+  padding: 3px 8px;
+  position: absolute;
+  z-index: 100;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  font-weight: normal;      /* force normal weight */
+  text-decoration: none;    /* remove underline */
+  font-style: normal;       /* remove italics if any */
+  white-space: nowrap;
+  box-shadow: 0px 2px 8px rgba(0,0,0,0.15);
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+
+
+/* Red arrow */
+.tooltip-link .tooltip-text::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -7px;
+  border-width: 7px;
+  border-style: solid;
+  border-color: #b50404 transparent transparent transparent;
+}
+
+/* White inner arrow to match background */
+.tooltip-link .tooltip-text::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: white transparent transparent transparent;
+  z-index: 1;
+}
+
+.tooltip-link:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
