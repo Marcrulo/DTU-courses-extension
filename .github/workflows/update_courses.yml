@@ -25,7 +25,9 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Run Python script
-      run: python 1_scrape_content.py
+      run: |
+        cd processing
+        python 1_scrape_content.py
 
     - name: Push output file to branch
       run: |
