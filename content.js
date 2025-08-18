@@ -85,7 +85,7 @@ Graph JSON structure example:
     `<label style='font-style: italic; color: gray; font-size: 8px;'>
       <br><br>You are welcome to contribute to the project by <br>
       leaving feedback or suggesting improvements: <br>
-      <a href="https://github.com/your-repo" target="_blank">https://github.com/your-repo</a>
+      <a href="https://github.com/Marcrulo/DTU-courses-extension" target="_blank">https://github.com/Marcrulo/DTU-courses-extension</a>
     </label>`;
 
   const rowAfter = table.insertRow();
