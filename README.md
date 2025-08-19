@@ -8,7 +8,7 @@ I made this extension because it was a very needed feature. I probably won't be 
 Enjoy!
 
 # 🤓 How to
-1) Install Chrome extension [here](https://chromewebstore.google.com/category/extensions)
+1) Install Chrome extension [here](https://chromewebstore.google.com/detail/dtu-extended-course-overv/pfgokeibjgebafnamhbgkgfgbmhmgpde)
 2. Below the ***Academic prerequisites*** section, 2 new sections will appear:
     - **Prerequisite course paths**
     - **Subsequent course paths**
