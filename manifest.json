@@ -9,16 +9,10 @@
    "content_scripts": [
         {
         "js": ["anseki-leader-line/leader-line.min.js","content.js"],
-        "css": ["my-css.css"],
+        "css": ["main.css"],
         "matches": ["https://kurser.dtu.dk/course/*"]
         }
     ],
-    "web_accessible_resources": [
-    {
-      "resources": ["graphs.json", "id_to_name.json"],
-      "matches": ["<all_urls>"]
-    }
-  ],
     "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",

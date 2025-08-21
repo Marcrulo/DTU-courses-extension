@@ -29,10 +29,10 @@ The project is structured in 2 parts: Scraping and processing the course graph s
 ## 🕸️ Part A - Course graph
 In `1_scrape_content.py`, we scrape the text of all valid course pages.
 
-In `2_create_graph.py` we use [networkx](https://networkx.org/) to first create of big graph of all DTU courses, and afterwards create seperate subgraphs for each course (the ones displayed by the extension)
+In `2_create_graph.py` we use [NetworkX](https://networkx.org/) to first create of big graph of all DTU courses, and afterwards create seperate subgraphs for each course (the ones displayed by the extension)
 
 ## 💻 Part B - Chrome extension
-The logic for the extension is all contained in the `content.js` file, where the css is stored in `my-css.css`. For a brief overview, the file is structured like this:
+The logic for the extension is all contained in the `content.js` file, where the css is stored in `main.css`. For a brief overview, the file is structured like this:
 1. Load relevant files
 2. Run code as soon as files are loaded (using async)
 3. Extend left-most div/table (the element with course type, name, points etc.)

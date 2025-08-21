@@ -39,9 +39,8 @@ jobs:
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add processing/test_file.txt
-        git add processing/valid_courses.json
-        git add id_to_name.json
-        git add graphs.json
+        git add jsons/valid_courses.json
+        git add jsons/id_to_name.json
+        git add jsons/graphs.json
         git commit -m "Update output for $(date +'%Y-%m-%d')"
         git push -u origin master --force

@@ -8,7 +8,7 @@ cookies = {
     '{DTUCoursesPublicLanguage}' : 'en-GB'
 }
 
-with open('department_names.json', 'r') as file:
+with open('../jsons/department_names.json', 'r') as file:
     departments = json.load(file)
 departments_keys = list(departments.keys())
 
@@ -24,7 +24,7 @@ for dep in departments_keys:
             continue
         valid_courses[course_num] = response.text  
 
-with open('valid_courses.json', 'w') as file:
+with open('../jsons/valid_courses.json', 'w') as file:
     json.dump(valid_courses, file)
 
 

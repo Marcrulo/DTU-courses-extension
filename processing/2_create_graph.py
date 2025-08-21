@@ -11,15 +11,15 @@ import numpy as np
 from pathlib import Path
 
 # Load stored course-site HTMLs
-with open('valid_courses.json') as f:
+with open('../jsons/valid_courses.json') as f:
     valid_courses = json.load(f)
 
 # Load department color mapping
-with open('department_colors.json') as f:
+with open('../jsons/department_colors.json') as f:
     department_colors = json.load(f)
 
 # Load department names
-with open('department_names.json') as f:
+with open('../jsons/department_names.json') as f:
     department_names = json.load(f)
 
 # Initialize directd graph
@@ -96,17 +96,17 @@ for node in G.nodes:
     G.nodes[node]['word_count'] = len(cleaned.split())
 
     
-# delete ../id_to_name.json
-file_path = Path("../id_to_name.json")
+# delete ../jsons/id_to_name.json
+file_path = Path("../jsons/id_to_name.json")
 if file_path.exists():
     os.remove(file_path)
     print(f"Deleted {file_path}")
     
-with open('../id_to_name.json', 'w') as f:
+with open('../jsons/id_to_name.json', 'w') as f:
     json.dump(id_to_name, f, indent=4)
 
 
-def graph_to_json(center_node, G, levels, filename="../graphs.json"):
+def graph_to_json(center_node, G, levels, filename="../jsons/graphs.json"):
     
     # get maximum number of nodes that are at the same level. One for level<0 and one for level>0
     subseq_height = defaultdict(int)
@@ -144,9 +144,9 @@ def graph_to_json(center_node, G, levels, filename="../graphs.json"):
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4)
 
-# delete ../graphs.json
+# delete ../jsons/graphs.json
 import os
-file_path = Path("../graphs.json")
+file_path = Path("../jsons/graphs.json")
 if file_path.exists():
     os.remove(file_path)
     print(f"Deleted {file_path}")
