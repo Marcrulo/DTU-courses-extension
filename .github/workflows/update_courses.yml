@@ -29,11 +29,7 @@ jobs:
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: Run Python script
-      run: |
-        cd processing
-        python 1_scrape_content.py
-        python 2_create_graph.py
+
 
     - name: Push output file to branch
       run: |
