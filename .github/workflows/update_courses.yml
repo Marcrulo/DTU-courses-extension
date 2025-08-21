@@ -35,6 +35,7 @@ jobs:
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add test_file.txt
         git add processing/valid_courses.json
         git add id_to_name.json
         git add graphs.json
