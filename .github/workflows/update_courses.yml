@@ -27,7 +27,7 @@ jobs:
     - name: Run Python script
       run: |
         cd processing
-        python 1_scrape_content.py
+        python 0_test.py
 
     - name: Push output file to branch
       run: |
