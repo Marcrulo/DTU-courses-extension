@@ -1,9 +1,9 @@
-name: Run Python Daily (change later)
+name: Update Graph
 
 on:
   schedule:
-    # Runs at 00:00 UTC every day
-    - cron: '0 0 * * *'
+    # Runs at 00:00 UTC on July 1st every year
+    - cron: '0 0 1 7 *'
   workflow_dispatch: # allows manual run
 
 jobs:
@@ -33,15 +33,14 @@ jobs:
       run: |
         cd processing
         python 1_scrape_content.py
+        python 2_create_graph.py
 
     - name: Push output file to branch
       run: |
-        cd processing
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git checkout -B daily-output
-        mkdir -p output
-        mv valid_courses.json output/
-        git add output/valid_courses.json
+        git add processing/valid_courses.json
+        git add id_to_name.json
+        git add graphs.json
         git commit -m "Update output for $(date +'%Y-%m-%d')"
-        git push -u origin daily-output --force
+        git push -u origin master --force

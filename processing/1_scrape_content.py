@@ -1,6 +1,5 @@
 import requests
 import json
-import time
 from bs4 import BeautifulSoup
 
 base_url = "https://kurser.dtu.dk/course/"

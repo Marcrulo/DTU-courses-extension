@@ -96,7 +96,7 @@ for node in G.nodes:
     G.nodes[node]['word_count'] = len(cleaned.split())
 
     
-# delete ../graphs.json
+# delete ../id_to_name.json
 file_path = Path("../id_to_name.json")
 if file_path.exists():
     os.remove(file_path)
