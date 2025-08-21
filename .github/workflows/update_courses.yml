@@ -32,7 +32,8 @@ jobs:
     - name: Run Python scripts
       run: |
         cd processing
-        python 0_test.py
+        python 1_scrape_content.py
+        python 2_create_graph.py
 
     - name: Push output file to branch
       run: |
