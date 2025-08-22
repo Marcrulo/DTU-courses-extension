@@ -76,12 +76,15 @@ for g, node in enumerate(G.nodes):
     
     ### Add title to node
     title = soup.title.text
-    print(g)
-    print(title)
-    print('-----')
     cleaned = ' '.join(title.strip().split())[6:]
     G.nodes[node]['course_title'] = cleaned
     id_to_name[node] = cleaned
+    
+    
+    print(g)
+    print(cleaned)
+    print('-----')
+    
     
     ### Add course text to node (General course objectives + Learning objectives + Content)
     div = soup.find('div', string=re.compile("General course objectives")).parent(string=True)
