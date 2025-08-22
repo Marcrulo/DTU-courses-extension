@@ -1,5 +1,5 @@
 bs4==4.13.4
+requests==2.32.4
 networkx
 matplotlib
 scikit-learn
-requests==2.32.4
