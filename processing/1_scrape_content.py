@@ -50,7 +50,7 @@ for dep in departments_keys:
 
         # Store HTML content
         valid_courses[course_num] = response.text
-        print(f"✅ Found valid course: {course_num} ({title_tag.text.strip()})")
+        # print(f"✅ Found valid course: {course_num} ({title_tag.text.strip()})")
 
         # Be polite – avoid hammering the server
         time.sleep(0.2)

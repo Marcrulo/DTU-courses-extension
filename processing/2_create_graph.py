@@ -68,7 +68,7 @@ for course_num in valid_courses:
                 G.add_edge(prerequisite, course_num)
 
 id_to_name = {}
-for node in G.nodes:
+for g, node in enumerate(G.nodes):
     
     ### Initialize BeuatifulSoup object
     page = G.nodes[node]['page']
@@ -76,6 +76,9 @@ for node in G.nodes:
     
     ### Add title to node
     title = soup.title.text
+    print(i)
+    print(title)
+    print()
     cleaned = ' '.join(title.strip().split())[6:]
     G.nodes[node]['course_title'] = cleaned
     id_to_name[node] = cleaned
