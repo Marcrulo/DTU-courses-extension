@@ -9,6 +9,7 @@ from matplotlib.colors import Normalize
 import time
 import numpy as np
 from pathlib import Path
+import os
 
 # Load stored course-site HTMLs
 with open('../jsons/valid_courses.json') as f:
@@ -160,7 +161,6 @@ if file_path.exists():
 
 # Get all courses
 all_course_nums = list(G.nodes())
-# center_node = all_course_nums[100]
 
 for center_node in all_course_nums:
 
