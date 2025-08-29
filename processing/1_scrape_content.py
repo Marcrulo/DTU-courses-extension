@@ -26,7 +26,7 @@ retries = Retry(
 session.mount("https://", HTTPAdapter(max_retries=retries))
 
 # "Initialize" GET request
-response = session.get(course_url, cookies=COOKIES, headers=HEADERS, timeout=10)
+response = session.get('https://kurser.dtu.dk/course/02285', cookies=COOKIES, headers=HEADERS, timeout=10)
 time.sleep(5)
 
 # Load departments
