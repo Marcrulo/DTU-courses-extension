@@ -11,7 +11,9 @@ COOKIES = {
     "{DTUCoursesPublicLanguage}": "en-GB",
 }
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (compatible; DTU-Course-Scraper/1.0)"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                  "AppleWebKit/537.36 (KHTML, like Gecko) "
+                  "Chrome/116.0.0.0 Safari/537.36"
 }
 
 # Setup session with retries
@@ -23,10 +25,15 @@ retries = Retry(
 )
 session.mount("https://", HTTPAdapter(max_retries=retries))
 
+# "Initialize" GET request
+response = session.get(course_url, cookies=COOKIES, headers=HEADERS, timeout=10)
+time.sleep(5)
+
 # Load departments
 with open("../jsons/department_names.json", "r") as file:
     departments = json.load(file)
 departments_keys = list(departments.keys())
+departments_keys = ['01'] # DEBUG
 
 valid_courses = {}
 
@@ -42,21 +49,23 @@ for dep in departments_keys:
             print(f"⚠️ Skipping {course_num}: {e}")
             continue
 
+        time.sleep(0.2)
         soup = BeautifulSoup(response.content, "html.parser")
-        title_tag = soup.find("title")
+        # title_tag = soup.find("title")
+        title = soup.title.string
 
-        if not title_tag or "not found" in title_tag.text.lower():
+        if title is None:
+            print('skipped')
             continue
 
         # Store HTML content
         valid_courses[course_num] = response.text
         # print(f"✅ Found valid course: {course_num} ({title_tag.text.strip()})")
 
-        # Be polite – avoid hammering the server
-        time.sleep(0.2)
+        
 
 # Save results
 with open("../jsons/valid_courses.json", "w") as file:
-    json.dump(valid_courses, file, ensure_ascii=False, indent=2)
+    json.dump(valid_courses, file, ensure_ascii=False, indent=4)
 
 print(f"\n🎉 Done! Found {len(valid_courses)} valid courses.")
