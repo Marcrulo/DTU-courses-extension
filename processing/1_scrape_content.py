@@ -33,7 +33,7 @@ time.sleep(5)
 with open("../jsons/department_names.json", "r") as file:
     departments = json.load(file)
 departments_keys = list(departments.keys())
-departments_keys = ['01'] # DEBUG
+# departments_keys = ['01'] # DEBUG
 
 valid_courses = {}
 
