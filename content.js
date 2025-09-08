@@ -5,7 +5,7 @@ const courseId = window.location.pathname.split('/').pop();
 // Load id_to_name mapping from JSON file
 async function loadIdToName() {
   try {
-    const response = await fetch('https://raw.githubusercontent.com/Marcrulo/DTU-courses-extension/master/id_to_name.json');
+    const response = await fetch('https://raw.githubusercontent.com/Marcrulo/DTU-courses-extension/master/jsons/id_to_name.json');
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     return await response.json();
   } catch (err) {
@@ -17,7 +17,7 @@ async function loadIdToName() {
 // Load graph data from JSON file for a specific courseId
 async function loadGraph(courseId) {
   try {
-    const response = await fetch('https://raw.githubusercontent.com/Marcrulo/DTU-courses-extension/master/graphs.json');
+    const response = await fetch('https://raw.githubusercontent.com/Marcrulo/DTU-courses-extension/master/jsons/graphs.json');
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
     return data[courseId];
