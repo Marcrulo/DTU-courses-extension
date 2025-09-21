@@ -1,8 +1,7 @@
 // Get course ID from URL
-// Example: https://kurser.dtu.dk/course/<course-id>
 const courseId = window.location.pathname.split('/').pop();
 
-// Load id_to_name mapping from JSON file
+// Load id_to_name mapping
 async function loadIdToName() {
   try {
     const response = await fetch('https://raw.githubusercontent.com/Marcrulo/DTU-courses-extension/master/jsons/id_to_name.json');
@@ -14,7 +13,7 @@ async function loadIdToName() {
   }
 }
 
-// Load graph data from JSON file for a specific courseId
+// Load graph data for a course
 async function loadGraph(courseId) {
   try {
     const response = await fetch('https://raw.githubusercontent.com/Marcrulo/DTU-courses-extension/master/jsons/graphs.json');
@@ -27,33 +26,26 @@ async function loadGraph(courseId) {
   }
 }
 
-/*
-Graph JSON structure example:
+// Utility: check if table is empty
+function isTableEmpty(table) { return table.every(row => row.every(cell => cell === null)); }
 
-{
-  "01001": {
-    "name": "Math",
-    "nodes": [
-      {"id": "01003", "level": -1},
-      {"id": "01567", "level": 1}
-    ],
-    "edges": [
-      {"source": "01003", "target": "01001"},
-      {"source": "01001", "target": "01567"}
-    ],
-    "max_subseq": 1,
-    "max_prereq": 1,
-    "subseq_height": 1,
-    "prereq_height": 5
+// Utility: get max column size
+function getMaxColumnSize(table) {
+  if (!table.length || !table[0].length) return 0;
+  let max = 0;
+  const cols = table[0].length;
+  for (let col = 0; col < cols; col++) {
+    let count = 0;
+    for (let row = 0; row < table.length; row++) if (table[row][col] !== null) count++;
+    if (count > max) max = count;
   }
+  return max;
 }
-*/
 
 (async () => {
   const graph = await loadGraph(courseId);
   const mapping = await loadIdToName();
 
-  // Insert new rows into the second table on the page
   const tables = document.querySelectorAll("table");
   const table = tables[1];
 
@@ -61,7 +53,7 @@ Graph JSON structure example:
   const cell_before1 = rowBefore.insertCell();
   const cell_before2 = rowBefore.insertCell();
 
-  // Disclaimer row
+  // Disclaimer
   const rowDisclaimer = table.insertRow();
   const cell_disclaimer = rowDisclaimer.insertCell();
   cell_disclaimer.colSpan = 2;
@@ -79,7 +71,6 @@ Graph JSON structure example:
   const cell_title_subseq = rowSubseq.insertCell();
   const cell_content_subseq = rowSubseq.insertCell();
 
-  // Footer / contact row
   const rowContact = table.insertRow();
   const cell_contact = rowContact.insertCell();
   cell_contact.colSpan = 2;
@@ -94,7 +85,7 @@ Graph JSON structure example:
   const cell_after1 = rowAfter.insertCell();
   const cell_after2 = rowAfter.insertCell();
 
-  // Section titles
+  // Titles
   cell_title_prereq.innerHTML = "<label>Prerequisite course <br> paths</label>";
   cell_title_subseq.innerHTML = "<label>Subsequent course <br> paths</label>";
 
@@ -107,17 +98,12 @@ Graph JSON structure example:
   function buildTables(courseId, graph) {
     const { max_subseq = 0, max_prereq = 0, subseq_height = 0, prereq_height = 0 } = graph;
 
-    const table_prereq = Array.from({ length: prereq_height }, () =>
-      Array(max_prereq + 1).fill(null)
-    );
-    const table_subseq = Array.from({ length: subseq_height }, () =>
-      Array(max_subseq + 1).fill(null)
-    );
+    const table_prereq = Array.from({ length: prereq_height }, () => Array(max_prereq + 1).fill(null));
+    const table_subseq = Array.from({ length: subseq_height }, () => Array(max_subseq + 1).fill(null));
 
     const prereq_row = {};
     const subseq_row = {};
 
-    // Place nodes in correct table depending on level
     for (const { id, level } of graph.nodes) {
       if (level < 0) {
         if (!(level in prereq_row)) prereq_row[level] = 0;
@@ -130,52 +116,29 @@ Graph JSON structure example:
       }
     }
 
-    // Place the courseId itself
     if (prereq_height > 0) table_prereq[0][max_prereq] = courseId;
     if (subseq_height > 0) table_subseq[0][0] = courseId;
 
-    // Ensure non-empty tables
-    if (table_prereq.length === 0) table_prereq.push([null]);
-    if (table_subseq.length === 0) table_subseq.push([null]);
+    for (let row of table_prereq) for (let j = 1; j < row.length; j += 2) row.splice(j, 0, null);
+    for (let row of table_subseq) for (let j = 1; j < row.length; j += 2) row.splice(j, 0, null);
 
-    // Add spacing columns
-    for (let row of table_prereq) {
-      for (let j = 1; j < row.length; j += 2) row.splice(j, 0, null);
-    }
-    for (let row of table_subseq) {
-      for (let j = 1; j < row.length; j += 2) row.splice(j, 0, null);
-    }
-
-    // Helper: sort values in each column alphabetically
     function sortColumns(table) {
-      const rows = table.length;
-      const cols = table[0]?.length || 0;
-
+      const rows = table.length, cols = table[0]?.length || 0;
       for (let col = 0; col < cols; col++) {
         const values = [];
-        for (let row = 0; row < rows; row++) {
-          if (table[row][col] !== null) values.push(table[row][col]);
-        }
+        for (let row = 0; row < rows; row++) if (table[row][col] !== null) values.push(table[row][col]);
         values.sort();
-        for (let row = 0; row < rows; row++) {
-          table[row][col] = row < values.length ? values[row] : null;
-        }
+        for (let row = 0; row < rows; row++) table[row][col] = row < values.length ? values[row] : null;
       }
     }
 
-    // Helper: center values vertically in each column
     function centerColumns(table) {
-      const rows = table.length;
-      const cols = table[0]?.length || 0;
-
+      const rows = table.length, cols = table[0]?.length || 0;
       for (let col = 0; col < cols; col++) {
         const values = [];
-        for (let row = 0; row < rows; row++) {
-          if (table[row][col] !== null) values.push(table[row][col]);
-        }
+        for (let row = 0; row < rows; row++) if (table[row][col] !== null) values.push(table[row][col]);
         const filled = values.length;
-        if (filled === 0) continue;
-
+        if (!filled) continue;
         const topPadding = Math.floor((rows - filled) / 2);
         for (let row = 0; row < rows; row++) {
           const idx = row - topPadding;
@@ -194,137 +157,107 @@ Graph JSON structure example:
 
   const { table_prereq, table_subseq } = buildTables(courseId, graph);
 
-  /* ====== RENDER TABLES ====== */
   function renderTable(table, type, fontSizeBase) {
     return `
-      <table id='course-overview-${type}' style="width: 100%; border-collapse: separate;">
+      <table id='course-overview-${type}' style="width: 100%; border-collapse: separate; opacity:0; transition: opacity 0.5s;">
         ${table.map(row => `
-          <tr>
-            ${row.map((cell, index) => `
-              <td id='${cell ? cell + "_" + type : ""}'
-                  style="width: ${index % 2 === 0 ? "30px" : "50px"};">
-                ${cell ? `
-                  <a href="https://kurser.dtu.dk/course/${cell}"
-                     class="tooltip-link"
-                     style="color: #b50404; text-decoration: none; font-size: ${fontSizeBase - (type === "prereq" ? graph.max_prereq : graph.max_subseq)}px;">
-                    ${cell}
-                    <span class="tooltip-text">${mapping[cell] || "No info available"}</span>
-                  </a>` : ""}
-              </td>`).join("")}
+          <tr>${row.map((cell,index)=>`
+            <td id='${cell ? cell + "_" + type : ""}' style="width:${index%2===0?'30px':'50px'}; text-align:center; vertical-align:middle;">
+              ${cell?`<a href="https://kurser.dtu.dk/course/${cell}" class="tooltip-link" style="color:#b50404;text-decoration:none;font-size:${fontSizeBase-(type==='prereq'?graph.max_prereq:graph.max_subseq)}px;">
+              ${cell}<span class="tooltip-text">${mapping[cell]||"No info available"}</span></a>`:""}
+            </td>`).join("")}
           </tr>`).join("")}
       </table>
     `;
   }
 
-  // Fill content cells
-  cell_content_prereq.innerHTML = renderTable(table_prereq, "prereq", 16);
-  cell_content_subseq.innerHTML = renderTable(table_subseq, "subseq", 16);
+  /* ====== PREVIEW/SHOW LOGIC BASED ON MAX COLUMN SIZE ====== */
+  function renderPreview(cellContent, tableData, type, emptyMessage) {
+    if (isTableEmpty(tableData)) {
+      cellContent.innerHTML = `<label style="font-style: italic; color: gray;">${emptyMessage}</label>`;
+      return;
+    }
 
-  // Replace with labels if empty
-  function isTableEmpty(table) {
-    return table.every(row => row.every(cell => cell === null));
-  }
-  if (isTableEmpty(table_prereq)) {
-    cell_content_prereq.innerHTML =
-      `<label style="font-style: italic; color: gray;">This course does not have any prerequisites</label>`;
-  }
-  if (isTableEmpty(table_subseq)) {
-    cell_content_subseq.innerHTML =
-      `<label style="font-style: italic; color: gray;">This course does not lead to any other courses</label>`;
-  }
-
-  // Highlight "endpoints" of prereq/subseq tables
-  cell_content_prereq.querySelectorAll("td:last-child").forEach(cell => {
-    cell.style.fontStyle = "italic";
-    cell.style.textDecoration = "underline";
-    cell.style.color = "#b50404";
-  });
-  cell_content_subseq.querySelectorAll("td:first-child").forEach(cell => {
-    cell.style.fontStyle = "italic";
-    cell.style.textDecoration = "underline";
-    cell.style.color = "#b50404";
-  });
-
-  /* ====== DRAW STATIC LEADERLINES ====== */
-  for (const edge of graph.edges) {
-    for (const suffix of ["_prereq", "_subseq"]) {
-      const startNode = document.getElementById(edge.source + suffix);
-      const endNode = document.getElementById(edge.target + suffix);
-      if (startNode && endNode) {
-        new LeaderLine(startNode, endNode, {
-          size: 2,
-          color: "rgba(36, 4, 9, 0.3)",
-          path: "straight",
-          endPlug: "arrow3",
-          startSocket: "right",
-          endSocket: "left",
-        });
-      }
+    const maxCol = getMaxColumnSize(tableData);
+    if (maxCol > 10) {
+      cellContent.innerHTML = `
+        <div style="font-style: italic; color: gray; text-align: center; margin: 10px 0;">
+          The ${type} graph is quite big. Click the button below to show the full graph.
+        </div>
+        <div style="text-align: center; margin: 5px 0;">
+          <button class="showFullGraph" data-type="${type}" style="padding:5px 10px; cursor:pointer;">Show full graph</button>
+        </div>
+      `;
+    } else {
+      renderFullGraph(type);
     }
   }
 
-  /* ====== INTERACTIVE HIGHLIGHTING ====== */
-  let tempLines = [];
-  let highlightedLinks = [];
+  /* ====== FULL GRAPH RENDER ====== */
+  function renderFullGraph(type) {
+    const cellContent = type==="prerequisite"?cell_content_prereq:cell_content_subseq;
+    const tableData = type==="prerequisite"?table_prereq:table_subseq;
+    const suffix = type==="prerequisite"?"_prereq":"_subseq";
 
-  document.querySelectorAll(".tooltip-link").forEach(link => {
-    link.addEventListener("mouseenter", () => {
-      const table_id = "_" + link.closest("table").id.split("-")[2]; // "_prereq" or "_subseq"
-      const hoveredId = link.href.split("/").pop();
+    if (isTableEmpty(tableData)) return;
 
-      // Find edges connected to hovered course
-      const connectedEdges = graph.edges.filter(
-        e => e.source === hoveredId || e.target === hoveredId
-      );
+    cellContent.innerHTML = renderTable(tableData,suffix.slice(1),16);
+    const tableEl = cellContent.querySelector("table");
+    setTimeout(()=>{tableEl.style.opacity=1;},10);
 
-      // Collect all connected IDs
-      const connectedIds = new Set([hoveredId]);
-      connectedEdges.forEach(e => {
-        connectedIds.add(e.source);
-        connectedIds.add(e.target);
-      });
+    if(type==="prerequisite"){
+      tableEl.querySelectorAll("td:last-child").forEach(c=>{c.style.fontStyle="italic";c.style.textDecoration="underline";c.style.color="#b50404";});
+    } else {
+      tableEl.querySelectorAll("td:first-child").forEach(c=>{c.style.fontStyle="italic";c.style.textDecoration="underline";c.style.color="#b50404";});
+    }
 
-      // Highlight connected nodes
-      connectedIds.forEach(id => {
-        const elems = document.querySelectorAll(`td[id='${id}${table_id}'] .tooltip-link`);
-        elems.forEach(el => {
-          el.style.fontWeight = "bold";
-          el.style.textDecoration = "underline";
-          el.style.color = "#b50404";
-          highlightedLinks.push(el);
+    for(const edge of graph.edges){
+      const startNode=document.getElementById(edge.source+suffix);
+      const endNode=document.getElementById(edge.target+suffix);
+      if(startNode && endNode){
+        new LeaderLine(startNode,endNode,{size:2,color:"rgba(36,4,9,0.3)",path:"straight",endPlug:"arrow3",startSocket:"right",endSocket:"left"});
+      }
+    }
+
+    let tempLines=[], highlightedLinks=[];
+    tableEl.querySelectorAll(".tooltip-link").forEach(link=>{
+      link.addEventListener("mouseenter",()=>{
+        const hoveredId=link.href.split("/").pop();
+        const connectedEdges=graph.edges.filter(e=>e.source===hoveredId || e.target===hoveredId);
+        const connectedIds=new Set([hoveredId]);
+        connectedEdges.forEach(e=>{connectedIds.add(e.source); connectedIds.add(e.target);});
+        connectedIds.forEach(id=>{
+          const elems=document.querySelectorAll(`td[id='${id}${suffix}'] .tooltip-link`);
+          elems.forEach(el=>{el.style.fontWeight="bold";el.style.textDecoration="underline";el.style.color="#b50404";highlightedLinks.push(el);});
+        });
+        connectedEdges.forEach(edge=>{
+          const startNode=document.getElementById(edge.source+suffix);
+          const endNode=document.getElementById(edge.target+suffix);
+          if(startNode && endNode){
+            const line=new LeaderLine(startNode,endNode,{size:3,color:"rgba(181,4,4,0.9)",path:"straight",endPlug:"arrow3",startSocket:"right",endSocket:"left"});
+            tempLines.push(line);
+          }
         });
       });
-
-      // Draw temporary leaderlines
-      connectedEdges.forEach(edge => {
-        const startNode = document.getElementById(edge.source + table_id);
-        const endNode = document.getElementById(edge.target + table_id);
-        if (startNode && endNode) {
-          const line = new LeaderLine(startNode, endNode, {
-            size: 3,
-            color: "rgba(181, 4, 4, 0.9)",
-            path: "straight",
-            endPlug: "arrow3",
-            startSocket: "right",
-            endSocket: "left",
-          });
-          tempLines.push(line);
-        }
+      link.addEventListener("mouseleave",()=>{
+        tempLines.forEach(l=>l.remove()); tempLines=[];
+        highlightedLinks.forEach(el=>{el.style.fontWeight="";el.style.textDecoration="";el.style.color="";});
+        highlightedLinks=[];
       });
     });
+  }
 
-    link.addEventListener("mouseleave", () => {
-      // Remove temporary lines
-      tempLines.forEach(line => line.remove());
-      tempLines = [];
+  // Render previews
+  renderPreview(cell_content_prereq, table_prereq, "prerequisite", "This course does not have any prerequisites");
+  renderPreview(cell_content_subseq, table_subseq, "subsequent", "This course does not lead to any other courses");
 
-      // Remove highlights
-      highlightedLinks.forEach(el => {
-        el.style.fontWeight = "";
-        el.style.textDecoration = "";
-        el.style.color = "";
-      });
-      highlightedLinks = [];
-    });
+  // Button click
+  document.addEventListener("click", e=>{
+    if(e.target && e.target.classList.contains("showFullGraph")){
+      const type=e.target.dataset.type;
+      renderFullGraph(type);
+      e.target.parentElement.remove();
+    }
   });
+
 })();
