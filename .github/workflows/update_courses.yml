@@ -3,9 +3,11 @@ name: Update Graph
 on:
   schedule:
     # Runs at 00:00 UTC on July 1st every year
-    - cron: '0 0 1 7 *'
+    # - cron: '0 0 1 7 *'
     # Runs every day at midnight
     # - cron: '0 0 * * *'
+    # Run 1st of every month
+    - cron: '0 0 1 * *'
   workflow_dispatch: # allows manual run
 
 jobs:
