@@ -33,10 +33,10 @@ In `2_create_graph.py` we use [NetworkX](https://networkx.org/) to first create 
 
 ## 💻 Part B - Chrome extension
 The logic for the extension is all contained in the `content.js` file, where the css is stored in `main.css`. For a brief overview, the file is structured like this:
-1. Load relevant files
-2. Run code as soon as files are loaded (using async)
-3. Extend left-most div/table (the element with course type, name, points etc.)
-4. Constructing tables structure, where the cells represent graph nodes (courses)
-5. Render tables in HTML
-6. Draw lines (edges) between cells, corresponding to the graph we computed. Lines are created using the "LeaderLine" package
-7. Upon hovering, highlight node and its 1-hop neighborhood (highlight immediate neighbors in both directions)
+1) Read the json gists that are continuously updated through a github action
+2) Run code as soon as files are loaded (using async)
+3) Extend left-most div/table (the element with course type, name, points etc.)
+4) Constructing and rendering tables, where the cells represent graph nodes (courses)
+5) Draw lines (edges) between cells, corresponding to the graph we computed. Lines are created using the “LeaderLine” package
+6) Upon hovering, highlight node and its 1-hop neighborhood (highlight immediate neighbors in both directions)
+7) Collapse graph if its too big; requiring the user to click in order to get the full view
