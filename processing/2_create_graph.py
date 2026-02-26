@@ -88,19 +88,28 @@ for g, node in enumerate(G.nodes):
     
     
     ### Add course text to node (General course objectives + Learning objectives + Content)
-    div = soup.find('div', string=re.compile("General course objectives")).parent(string=True)
+    course_objectives_div = soup.find('div', string=re.compile("General course objectives"))
     
-    remove_indeces = []
-    for d, text in enumerate(div):
-        if text in ["General course objectives", "Learning objectives", "Content", "Last updated", "\r\nA student who has met the objectives of the course will be able to:\r\n\r\n"]:
-            remove_indeces.append(d)
-    
-    new_div = [div[i] for i in range(len(div)) if i not in remove_indeces]
-    text = ' '.join(new_div[:-1]).replace('\r', ' ').replace('\n', '')
-    cleaned = ' '.join(text.strip().split())
-    G.nodes[node]['course_text'] = cleaned  
-    G.nodes[node]['text_size'] = len(cleaned) 
-    G.nodes[node]['word_count'] = len(cleaned.split())
+    if course_objectives_div is None:
+        # Course doesn't have 'General course objectives' section
+        print(f"⚠️ Skipping text extraction for {node}: No 'General course objectives' section found")
+        G.nodes[node]['course_text'] = ""  
+        G.nodes[node]['text_size'] = 0
+        G.nodes[node]['word_count'] = 0
+    else:
+        div = course_objectives_div.parent(string=True)
+        
+        remove_indeces = []
+        for d, text in enumerate(div):
+            if text in ["General course objectives", "Learning objectives", "Content", "Last updated", "\r\nA student who has met the objectives of the course will be able to:\r\n\r\n"]:
+                remove_indeces.append(d)
+        
+        new_div = [div[i] for i in range(len(div)) if i not in remove_indeces]
+        text = ' '.join(new_div[:-1]).replace('\r', ' ').replace('\n', '')
+        cleaned = ' '.join(text.strip().split())
+        G.nodes[node]['course_text'] = cleaned  
+        G.nodes[node]['text_size'] = len(cleaned) 
+        G.nodes[node]['word_count'] = len(cleaned.split())
 
     
 # delete ../jsons/id_to_name.json

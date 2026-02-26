@@ -19,14 +19,14 @@ HEADERS = {
 # Setup session with retries
 session = requests.Session()
 retries = Retry(
-    total=5,
-    backoff_factor=1,  # exponential backoff: 1s, 2s, 4s, ...
-    status_forcelist=[500, 502, 503, 504]
+    total=10,  # increased from 5 to 10
+    backoff_factor=2,  # increased from 1 to 2 (exponential backoff: 2s, 4s, 8s, ...)
+    status_forcelist=[500, 502, 503, 504, 429]  # added 429 (too many requests)
 )
 session.mount("https://", HTTPAdapter(max_retries=retries))
 
 # "Initialize" GET request
-response = session.get('https://kurser.dtu.dk/course/02285', cookies=COOKIES, headers=HEADERS, timeout=10)
+response = session.get('https://kurser.dtu.dk/course/02285', cookies=COOKIES, headers=HEADERS, timeout=15)
 time.sleep(5)
 
 # Load departments
@@ -43,13 +43,13 @@ for dep in departments_keys:
         course_num = f"{dep}{i:03}"
         course_url = BASE_URL + course_num
         try:
-            response = session.get(course_url, cookies=COOKIES, headers=HEADERS, timeout=10)
+            response = session.get(course_url, cookies=COOKIES, headers=HEADERS, timeout=15)
             response.raise_for_status()
         except requests.RequestException as e:
             print(f"⚠️ Skipping {course_num}: {e}")
             continue
 
-        time.sleep(0.2)
+        time.sleep(0.5)  # increased from 0.2 to 0.5 seconds
         soup = BeautifulSoup(response.content, "html.parser")
         # title_tag = soup.find("title")
         title = soup.title.string
